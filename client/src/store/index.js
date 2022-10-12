@@ -60,8 +60,8 @@ export const useGlobalStore = () => {
             // CREATE A NEW LIST
             case GlobalStoreActionType.CREATE_NEW_LIST: {
                 return setStore({
-                    idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    idNamePairs: payload.idNamePairs,
+                    currentList: payload.newList,
                     newListCounter: store.newListCounter + 1,
                     listNameActive: false
                 })
@@ -167,6 +167,27 @@ export const useGlobalStore = () => {
             }
         }
         asyncLoadIdNamePairs();
+    }
+
+    // THIS FUNCTION CREATES A NEW PLAYLIST
+    store.createNewList = function () {
+        async function asyncCreateNewList() {
+            let defaultList = { name: "Untitled", songs: []};
+            const response = await api.createPlaylist(defaultList);
+            if (response.data.success) {
+                console.log(response.data);
+                let newPairs = store.idNamePairs;
+                newPairs.push(defaultList);
+                storeReducer({
+                    type: GlobalStoreActionType.CREATE_NEW_LIST,
+                    payload: {idNamePairs: newPairs, newList: response.data.playlist}
+                });
+            }
+            else {
+                console.log("API FAILED TO CREATE LIST");
+            }
+        }
+        asyncCreateNewList();
     }
 
     store.setCurrentList = function (id) {

@@ -8,9 +8,11 @@ const Playlist = require('../models/playlist-model')
 */
 createPlaylist = (req, res) => {
     const body = req.body;
-    console.log("createPlaylist body: " + body);
+    console.log("createPlaylist body: ");
+    console.log(body);
 
     if (!body) {
+        console.log("HERE!")
         return res.status(400).json({
             success: false,
             error: 'You must provide a Playlist',

@@ -1,4 +1,5 @@
 const Playlist = require('../models/playlist-model')
+const Song = require('../models/song-model')
 /*
     This is our back-end API. It provides all the data services
     our database needs. Note that this file contains the controller
@@ -101,7 +102,7 @@ updatePlaylistById = async (req, res) => {
         console.log(list);
 
         list.name = req.body.name;
-        list.song = req.body.songs;
+        list.songs = req.body.songs;
         console.log("AFTER");
         console.log(list);
 
@@ -155,56 +156,6 @@ deletePlaylistById = async (req, res) => {
     })
 }
 
-addNewSong = async (req, res) => {
-    console.log("BODY");
-    console.log(req.body);
-    console.log("ID");
-    console.log(req.id);
-
-    if(req.body == null){
-        return res.status(400).json({ 
-            success: false, 
-            error: err,
-            message: "No Playlist Sent"
-        })
-    }
-
-    await Playlist.findOne({ _id: req.id }, (err, list) => {
-        if (err) {
-            return res.status(400).json({ 
-                success: false, 
-                error: err,
-                message: "Error Finding List"
-            })
-        }
-
-        console.log("BEFORE");
-        console.log(list);
-
-        list.name = req.body.name;
-        list.song = req.body.songs;
-        console.log("AFTER");
-        console.log(list);
-
-        list
-            .save()
-            .then(() => {
-                return res.status(200).json({
-                    success: true,
-                    playlist: list,
-                    message: 'New Song Added!',
-                })
-            })
-            .catch(error => {
-                return res.status(400).json({
-                    error,
-                    message: 'Error Adding Song!',
-                })
-            })
-    })
-}
-
-
 module.exports = {
     createPlaylist,
     getPlaylists,
@@ -212,5 +163,4 @@ module.exports = {
     getPlaylistById,
     updatePlaylistById,
     deletePlaylistById,
-    addNewSong,
 }

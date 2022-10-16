@@ -125,6 +125,8 @@ export const useGlobalStore = () => {
             }
             // ADD A NEW SONG
             case GlobalStoreActionType.ADD_NEW_SONG: {
+                console.log("Getting Here");
+                console.log(payload.updatedList);
                 return setStore({
                     idNamePairs: store.idNamePairs,
                     currentList: payload.updatedList,
@@ -321,14 +323,12 @@ export const useGlobalStore = () => {
         });
     }
 
+    //THIS FUNCTION CREATES A NEW SONG AND ADDS IT TO THE CURRENT LIST
     store.addNewSong = function () {
         if(store.currentList == null){
             return
         }
-
-        
         async function asyncAddNewSong() {
-
 
             let id = store.currentList._id;
             let songBody = { 
@@ -340,16 +340,39 @@ export const useGlobalStore = () => {
             let playlist = null;
             if (response.data.success) {
                 playlist = response.data.playlist;
-                playlist.songs.push(songBody);
+                console.log("Current Playlist Found:");
+                console.log(playlist);
             }
 
-            response = await api.addNewSong(playlist, id);
-            if(response.data.success) {
-                storeReducer({
-                    type: GlobalStoreActionType.ADD_NEW_SONG,
-                    payload: {updatedList: response.data.playlist}
-                });
+            async function asyncCreateNewSong(songBody){
+                response = await api.createNewSong(songBody);
+                let song = null;
+                if (response.data.success) {
+                    song = response.data.newSong;
+                    console.log("Song Created:");
+                    console.log(song);
+                }
+                if(playlist != null){
+                    playlist.songs.push(song);
+                    console.log("Playlist with New Song:");
+                    console.log(playlist);
+                }
+                async function asyncUpdateList(playlist, id){
+                    response = await api.updatePlaylistById(id, playlist);
+                    if(response.data.success) {
+                        console.log("Final List:");
+                        console.log(response.data.playlist);
+                        storeReducer({
+                            type: GlobalStoreActionType.ADD_NEW_SONG,
+                            payload: {updatedList: response.data.playlist}
+                        });
+                    }
+                }
+                console.log("List sending to update");
+                console.log(playlist);
+                asyncUpdateList(playlist, id);
             }
+            asyncCreateNewSong(songBody);
         }
         asyncAddNewSong();
 

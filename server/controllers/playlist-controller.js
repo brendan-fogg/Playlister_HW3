@@ -42,6 +42,7 @@ createPlaylist = (req, res) => {
         })
 }
 getPlaylistById = async (req, res) => {
+    console.log("why am I here?");
     await Playlist.findOne({ _id: req.params.id }, (err, list) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
@@ -50,6 +51,7 @@ getPlaylistById = async (req, res) => {
         return res.status(200).json({ success: true, playlist: list })
     }).catch(err => console.log(err))
 }
+
 getPlaylists = async (req, res) => {
     await Playlist.find({}, (err, playlists) => {
         if (err) {
@@ -121,10 +123,94 @@ updatePlaylistById = async (req, res) => {
     })
 }
 
+deletePlaylistById = async (req, res) => {
+
+   let id = req.params.id;
+   console.log(id);
+
+    await Playlist.findOne({ _id: id }, (err, list) => {
+        if (err) {
+            return res.status(400).json({ 
+                success: false, 
+                error: err,
+                message: "Error Finding List"
+            })
+        }
+
+        list
+            .delete()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    playlist: list,
+                    message: 'Playlist Deleted!',
+                })
+            })
+            .catch(error => {
+                return res.status(400).json({
+                    error,
+                    message: 'Playlist Not Deleted!',
+                })
+            })
+    })
+}
+
+addNewSong = async (req, res) => {
+    console.log("BODY");
+    console.log(req.body);
+    console.log("ID");
+    console.log(req.id);
+
+    if(req.body == null){
+        return res.status(400).json({ 
+            success: false, 
+            error: err,
+            message: "No Playlist Sent"
+        })
+    }
+
+    await Playlist.findOne({ _id: req.id }, (err, list) => {
+        if (err) {
+            return res.status(400).json({ 
+                success: false, 
+                error: err,
+                message: "Error Finding List"
+            })
+        }
+
+        console.log("BEFORE");
+        console.log(list);
+
+        list.name = req.body.name;
+        list.song = req.body.songs;
+        console.log("AFTER");
+        console.log(list);
+
+        list
+            .save()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    playlist: list,
+                    message: 'New Song Added!',
+                })
+            })
+            .catch(error => {
+                return res.status(400).json({
+                    error,
+                    message: 'Error Adding Song!',
+                })
+            })
+    })
+}
+
+
 module.exports = {
     createPlaylist,
     getPlaylists,
     getPlaylistPairs,
     getPlaylistById,
     updatePlaylistById,
+    deletePlaylistById,
+    addNewSong,
 }

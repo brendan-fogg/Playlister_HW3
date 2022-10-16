@@ -43,7 +43,6 @@ createPlaylist = (req, res) => {
         })
 }
 getPlaylistById = async (req, res) => {
-    console.log("why am I here?");
     await Playlist.findOne({ _id: req.params.id }, (err, list) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })

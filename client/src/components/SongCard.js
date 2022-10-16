@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext} from 'react'
 import { GlobalStoreContext } from '../store'
 
 function SongCard(props) {
@@ -6,11 +6,21 @@ function SongCard(props) {
 
     const { song, index } = props;
     let cardClass = "list-card unselected-list-card";
+
+    function openEditSongModal(){
+        //Set the song for edit
+        store.setSongForEdit(index);
+        let modal = document.getElementById("edit-song-modal");
+        modal.classList.add("is-visible");
+    }
+
+
     return (
         <div
             key={index}
             id={'song-' + index + '-card'}
             className={cardClass}
+            onDoubleClick={openEditSongModal}
         >
             {index + 1}.
             <a

@@ -14,6 +14,13 @@ function SongCard(props) {
         modal.classList.add("is-visible");
     }
 
+    function openDeleteSongModal(){
+        //Set the song for edit
+        store.setSongForDeletion(index);
+        let modal = document.getElementById("delete-song-modal");
+        modal.classList.add("is-visible");
+    }
+
 
     return (
         <div
@@ -34,6 +41,7 @@ function SongCard(props) {
                 id={"remove-song-" + index}
                 className="list-card-button"
                 value={"\u2715"}
+                onClick={openDeleteSongModal}
             />
         </div>
     );

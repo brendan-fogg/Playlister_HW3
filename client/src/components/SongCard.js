@@ -21,6 +21,33 @@ function SongCard(props) {
         modal.classList.add("is-visible");
     }
 
+    function handleDragStart(event){
+        let target = event.target;
+        let targetId = target.id.substring(target.id.indexOf("-") + 1, target.id.indexOf("-") + 2);
+        let index = parseInt(targetId);
+        store.addDragIndex(index);
+    }
+    function handleDragOver(event){
+        event.preventDefault();
+        //console.log("HANDLE DRAG OVER");
+        //console.log(event);
+    }
+    function handleDragEnter(event){
+        //console.log("HANDLE DRAG ENTER");
+        //console.log(event);
+    }
+    function handleDragLeave(event){
+        //console.log("HANDLE DRAG LEAVE");
+        //console.log(event);
+    }
+    function handleDrop(event){
+        event.preventDefault();
+        let target = event.target;
+        let targetId = target.id.substring(target.id.indexOf("-") + 1, target.id.indexOf("-") + 2);
+        let index = parseInt(targetId);
+
+        store.moveSongTransaction(store.songIndexDragged, index);
+    }
 
     return (
         <div
@@ -28,6 +55,12 @@ function SongCard(props) {
             id={'song-' + index + '-card'}
             className={cardClass}
             onDoubleClick={openEditSongModal}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            draggable="true"
         >
             {index + 1}.
             <a

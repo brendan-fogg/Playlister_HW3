@@ -20,7 +20,7 @@ function DeleteSongModal(){
     }
     
     function deleteSong(event) {
-        store.deleteSongFromList();
+        store.deleteNewSongTransaction();
         let modal = document.getElementById("delete-song-modal");
         modal.classList.remove("is-visible");
     }

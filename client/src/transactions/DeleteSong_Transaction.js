@@ -10,28 +10,26 @@ export default class DeleteSong_Transaction extends jsTPS_Transaction {
     constructor(store) {
         super();
         this.store = store;
+        this.deletionIndex = store.deleteIndex;
+        this.deletedSong = store.songForDeletion;
     }
 
     doTransaction() {
         console.log("DELETE SONG TRANSACTION")
         this.store.deleteSongFromList();
 
-        let song = this.store.songForDeletion;
-        let playlist = this.store.currentList;
-
-        let newList = [];
-        for(const element of playlist.songs) {
-            if(element._id !== song._id){
-                newList.push(element);
-            }
-        }
-        playlist.songs = newList;
-        this.currentList = playlist;
-        console.log("store after delete song transaction")
+        console.log("Store after call:");
         console.log(this.store.currentList);
+
     }
     
     undoTransaction() {
         console.log("UNDO DELETE SONG TRANSACTION")
+        this.store.addSongAtIndex(this.deletedSong, this.deletionIndex);
+
+        console.log("Store after call:");
+        console.log(this.store.currentList);
+
+
     }
 }

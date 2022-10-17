@@ -31,7 +31,6 @@ export const GlobalStoreActionType = {
     UPDATE_SONG: "UPDATE_SONG",
     MARK_SONG_FOR_DELETION: "MARK_SONG_FOR_DELETION",
     SET_DRAG_INDEX: "SET_DRAG_INDEX",
-
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -50,6 +49,8 @@ export const useGlobalStore = () => {
         songForEdit: null,
         songForDeletion: null,
         songIndexDragged: null,
+        editIndex: null,
+        deleteIndex: null,
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -68,6 +69,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: null,
                 });
             }
             // STOP EDITING THE CURRENT LIST
@@ -81,6 +84,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: null,
                 })
             }
             // CREATE A NEW LIST
@@ -94,6 +99,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: null,
                 })
             }
             // DELETE A LIST
@@ -107,6 +114,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: null,
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
@@ -120,6 +129,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: null,
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -133,6 +144,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: null,
                 });
             }
             // UPDATE A LIST
@@ -146,6 +159,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: null,
                 });
             }
             // START EDITING A LIST NAME
@@ -159,6 +174,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: null,
                 });
             }
             // ADD A NEW SONG
@@ -172,6 +189,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: null,
                 })
             }
             case GlobalStoreActionType.MARK_SONG_FOR_EDIT: {
@@ -184,6 +203,8 @@ export const useGlobalStore = () => {
                     songForEdit: payload.song,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: payload.index,
+                    deleteIndex: null,
                 })
             }
             case GlobalStoreActionType.UPDATE_SONG: {
@@ -196,6 +217,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: null,
                 })
             }
             case GlobalStoreActionType.MARK_SONG_FOR_DELETION: {
@@ -208,6 +231,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: payload.song,
                     songIndexDragged: null,
+                    editIndex: null,
+                    deleteIndex: payload.index,
                 })
             }
             case GlobalStoreActionType.SET_DRAG_INDEX: {
@@ -220,6 +245,8 @@ export const useGlobalStore = () => {
                     songForEdit: null,
                     songForDeletion: null,
                     songIndexDragged: payload.index,
+                    editIndex: null,
+                    deleteIndex: null,
                 })
             }
             default:
@@ -444,6 +471,31 @@ export const useGlobalStore = () => {
         asyncAddNewSong();
     }
 
+    store.addSongAtIndex = function (song, index) {
+        if(store.currentList == null){
+            return
+        }
+        async function asyncAddSong(song, index) {
+
+            let playlist = store.currentList;
+            let id = store.currentList._id;
+
+            playlist.songs.splice(index, 0, song);
+                
+            async function asyncUpdateList(playlist, id){
+                let response = await api.updatePlaylistById(id, playlist);
+                if(response.data.success) {
+                    storeReducer({
+                        type: GlobalStoreActionType.ADD_NEW_SONG,
+                        payload: {updatedList: response.data.playlist}
+                    });
+                }
+            }
+            asyncUpdateList(playlist, id);
+        }
+        asyncAddSong(song,index);
+    }
+
     store.setSongForEdit = function (index){
         async function asyncSetSongForEdit(index){
             let list = store.currentList;
@@ -460,7 +512,7 @@ export const useGlobalStore = () => {
 
                 storeReducer({
                     type: GlobalStoreActionType.MARK_SONG_FOR_EDIT,
-                    payload: {song: songAtIndex}
+                    payload: {song: songAtIndex, index: index}
                 });
             }
         }
@@ -471,7 +523,7 @@ export const useGlobalStore = () => {
         async function asyncRemoveEditSongMark(){
             storeReducer({
                 type: GlobalStoreActionType.MARK_SONG_FOR_EDIT,
-                payload: {pair: null}
+                payload: {song: null, index: null}
             });
         }
         asyncRemoveEditSongMark();
@@ -524,9 +576,10 @@ export const useGlobalStore = () => {
             let list = store.currentList;
             if(list != null){
                 let songAtIndex = list.songs[index];
+                console.log(index);
                 storeReducer({
                     type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
-                    payload: {song: songAtIndex}
+                    payload: {song: songAtIndex, index: index}
                 });
             }
         }
@@ -537,7 +590,7 @@ export const useGlobalStore = () => {
         async function asyncRemoveDeleteSongMark(){
             storeReducer({
                 type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
-                payload: {pair: null}
+                payload: {song: null, index: null}
             });
         }
         asyncRemoveDeleteSongMark();

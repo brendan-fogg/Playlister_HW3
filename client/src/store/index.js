@@ -149,8 +149,6 @@ export const useGlobalStore = () => {
             }
             // ADD A NEW SONG
             case GlobalStoreActionType.ADD_NEW_SONG: {
-                console.log("FInding the error");
-                console.log(payload.updatedList);
                 return setStore({
                     idNamePairs: store.idNamePairs,
                     currentList: payload.updatedList,
@@ -284,11 +282,9 @@ export const useGlobalStore = () => {
     //THIS FUNCTION MARKS A LIST FOR DELETION
     store.markListForDeletion = function (id) {
         async function asyncMarkListForDeletion(id){
-            console.log(id);
             let pairs = store.idNamePairs;
             let markedPair = null;
             for (const element of pairs) {
-                console.log(element);
                 if(element._id === id){
                     markedPair = element;
                 }
@@ -316,17 +312,9 @@ export const useGlobalStore = () => {
 
     // THIS FUNCTION CREATES A NEW PLAYLIST
     store.deleteList = function (id) {
-        console.log(id);
         async function asyncDeleteList(id) {
-            console.log(id);
             let response = await api.deletePlaylistById(id);
             if (response.data.success) {
-                //let newPairs = store.idNamePairs;
-                //console.log(newPairs)
-                //storeReducer({
-                    //type: GlobalStoreActionType.DELETE_LIST,
-                    //payload: {idNamePairs: newPairs}
-                //});
                 response = await api.getPlaylistPairs();
                 if (response.data.success) {
                     let pairsArray = response.data.idNamePairs;
@@ -346,8 +334,6 @@ export const useGlobalStore = () => {
     }
 
     store.setCurrentList = function (id) {
-        console.log("AM I GETTING HERE?");
-        console.log(id);
         async function asyncSetCurrentList(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
@@ -399,8 +385,6 @@ export const useGlobalStore = () => {
             let playlist = null;
             if (response.data.success) {
                 playlist = response.data.playlist;
-                console.log("Current Playlist Found:");
-                console.log(playlist);
             }
 
             async function asyncCreateNewSong(songBody){
@@ -432,11 +416,9 @@ export const useGlobalStore = () => {
 
     store.setSongForEdit = function (index){
         async function asyncSetSongForEdit(index){
-            console.log(index);
             let list = store.currentList;
             if(list != null){
                 let songAtIndex = list.songs[index];
-                console.log(songAtIndex);
 
                 let title = document.getElementById("edit-title");
                 let artist = document.getElementById("edit-artist");
@@ -496,8 +478,6 @@ export const useGlobalStore = () => {
             async function asyncUpdateList(playlist, id){
                 let response = await api.updatePlaylistById(id, playlist);
                 if(response.data.success) {
-                    console.log("Final List:");
-                    console.log(response.data.playlist);
                     storeReducer({
                         type: GlobalStoreActionType.UPDATE_SONG,
                         payload: {updatedList: response.data.playlist}
@@ -514,10 +494,6 @@ export const useGlobalStore = () => {
             let list = store.currentList;
             if(list != null){
                 let songAtIndex = list.songs[index];
-                console.log("CURRENT LIST");
-                console.log(list);
-                console.log("SONG MARKED FOR DELETION");
-                console.log(songAtIndex);
                 storeReducer({
                     type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
                     payload: {song: songAtIndex}
@@ -541,10 +517,6 @@ export const useGlobalStore = () => {
         async function asyncDeleteSongFromList(){
             let song = store.songForDeletion;
             let playlist = store.currentList;
-            
-            console.log(song);
-            console.log(playlist.songs);
-
 
             let newList = [];
             for(const element of playlist.songs) {
@@ -566,6 +538,46 @@ export const useGlobalStore = () => {
             asyncUpdateList(playlist, playlist._id);
         }
         asyncDeleteSongFromList();
+    }
+
+    store.deleteSongByIndex = function (index){
+        async function asyncDeleteSongFromList(){
+            let playlist = store.currentList;
+
+            let newList = [];
+
+            for (let i = 0; i < playlist.songs.length; i++){
+                if(i !== index){
+                    newList.push(playlist.songs[i]);
+                }
+            }
+            playlist.songs = newList;
+
+            async function asyncUpdateList(playlist, id){
+                let response = await api.updatePlaylistById(id, playlist);
+                if(response.data.success) {
+                    storeReducer({
+                        type: GlobalStoreActionType.UPDATE_SONG,
+                        payload: {updatedList: response.data.playlist}
+                    });
+                }
+            }
+            asyncUpdateList(playlist, playlist._id);
+        }
+        asyncDeleteSongFromList();
+    }
+
+    store.getSongIdOfNewSong = function () {
+        async function asyncGetSongId(){
+            let listId = store.currentList._id;
+            let response = await api.getSongIdFromIndex(listId);
+            if(response.data.success) {
+                console.log("RETURNED ID IN FUNC");
+                console.log(response.data.id);
+                return response.data.id;
+            }
+        }
+        asyncGetSongId();
     }
 
     store.addNewSongTransaction = function () {

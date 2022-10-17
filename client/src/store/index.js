@@ -1,5 +1,8 @@
 import { createContext, useState } from 'react'
 import jsTPS from '../common/jsTPS'
+import AddSong_Transaction from '../transactions/AddSong_Transaction.js';
+
+
 import api from '../api'
 export const GlobalStoreContext = createContext({});
 /*
@@ -146,6 +149,8 @@ export const useGlobalStore = () => {
             }
             // ADD A NEW SONG
             case GlobalStoreActionType.ADD_NEW_SONG: {
+                console.log("FInding the error");
+                console.log(payload.updatedList);
                 return setStore({
                     idNamePairs: store.idNamePairs,
                     currentList: payload.updatedList,
@@ -262,9 +267,9 @@ export const useGlobalStore = () => {
             let defaultList = { name: "Untitled", songs: []};
             const response = await api.createPlaylist(defaultList);
             if (response.data.success) {
-                console.log(response.data);
                 let newPairs = store.idNamePairs;
-                newPairs.push(defaultList);
+                let newIdNamePair = {_id: response.data.playlist._id, name: response.data.playlist.name}
+                newPairs.push(newIdNamePair);
                 storeReducer({
                     type: GlobalStoreActionType.CREATE_NEW_LIST,
                     payload: {idNamePairs: newPairs, newList: response.data.playlist}
@@ -403,19 +408,14 @@ export const useGlobalStore = () => {
                 let song = null;
                 if (response.data.success) {
                     song = response.data.newSong;
-                    console.log("Song Created:");
-                    console.log(song);
                 }
                 if(playlist != null){
                     playlist.songs.push(song);
-                    console.log("Playlist with New Song:");
-                    console.log(playlist);
                 }
                 async function asyncUpdateList(playlist, id){
                     response = await api.updatePlaylistById(id, playlist);
                     if(response.data.success) {
-                        console.log("Final List:");
-                        console.log(response.data.playlist);
+                        
                         storeReducer({
                             type: GlobalStoreActionType.ADD_NEW_SONG,
                             payload: {updatedList: response.data.playlist}
@@ -423,6 +423,7 @@ export const useGlobalStore = () => {
                     }
                 }
                 asyncUpdateList(playlist, id);
+                
             }
             asyncCreateNewSong(songBody);
         }
@@ -513,6 +514,10 @@ export const useGlobalStore = () => {
             let list = store.currentList;
             if(list != null){
                 let songAtIndex = list.songs[index];
+                console.log("CURRENT LIST");
+                console.log(list);
+                console.log("SONG MARKED FOR DELETION");
+                console.log(songAtIndex);
                 storeReducer({
                     type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
                     payload: {song: songAtIndex}
@@ -563,6 +568,10 @@ export const useGlobalStore = () => {
         asyncDeleteSongFromList();
     }
 
+    store.addNewSongTransaction = function () {
+        let transaction = new AddSong_Transaction(store);
+        tps.addTransaction(transaction);
+    }
 
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT

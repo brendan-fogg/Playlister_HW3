@@ -15,8 +15,6 @@ export default class AddSong_Transaction extends jsTPS_Transaction {
     }
 
     doTransaction() {
-        console.log("store before add song transaction")
-        console.log(this.store.currentList);
         this.store.addNewSong();
         let songBody = { 
             _id: null,
@@ -25,13 +23,9 @@ export default class AddSong_Transaction extends jsTPS_Transaction {
             youTubeId: "dQw4w9WgXcQ"
         }
         this.store.currentList.songs.push(songBody);
-        console.log("store after add song transaction")
-        console.log(this.store.currentList);
     }
     
     undoTransaction() {
-        console.log("store reached from undoing add song transaction")
-        console.log(this.store.currentList);
         let index = this.store.currentList.songs.length - 1;
         this.store.deleteSongByIndex(index);
         
@@ -42,8 +36,5 @@ export default class AddSong_Transaction extends jsTPS_Transaction {
             }
         }
         this.store.currentList.songs = newList;
-
-        console.log("store after undoing add song transaction");
-        console.log(this.store.currentList);
     }
 }

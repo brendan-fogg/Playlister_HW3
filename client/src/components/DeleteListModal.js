@@ -13,21 +13,16 @@ function DeleteListModal(){
     if(pair != null){
         name = pair.name;
         id = pair._id;
-        console.log("LETS GOOOO!!!!");
-        console.log(name);
-        console.log(id);
     }
 
     function closeDeleteModal(event){
         store.removeDeleteMark();
         let modal = document.getElementById("delete-list-modal");
         modal.classList.remove("is-visible");
-        console.log(store.listPairForDeletion);
     }
     
     function deleteList(event) {
         let id = store.listPairForDeletion._id;
-        console.log(id);
         store.deleteList(id);
         let modal = document.getElementById("delete-list-modal");
         modal.classList.remove("is-visible");

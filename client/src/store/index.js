@@ -302,19 +302,11 @@ export const useGlobalStore = () => {
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
         // GET THE LIST
-        console.log("ID");
-        console.log(id);
-        console.log("NEW NAME");
-        console.log(newName);
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
                 let playlist = response.data.playlist;
-                console.log("OLD PLAYLIST");
-                console.log(playlist);
                 playlist.name = newName;
-                console.log("NEW PLAYLIST");
-                console.log(playlist);
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
@@ -322,8 +314,6 @@ export const useGlobalStore = () => {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
                                 let pairsArray = response.data.idNamePairs;
-                                console.log("PAIRS ARRAY");
-                                console.log(pairsArray);
                                 storeReducer({
                                     type: GlobalStoreActionType.CHANGE_LIST_NAME,
                                     payload: {
@@ -646,7 +636,6 @@ export const useGlobalStore = () => {
             let list = store.currentList;
             if(list != null){
                 let songAtIndex = list.songs[index];
-                console.log(index);
                 storeReducer({
                     type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
                     payload: {song: songAtIndex, index: index}
@@ -725,8 +714,6 @@ export const useGlobalStore = () => {
             let listId = store.currentList._id;
             let response = await api.getSongIdFromIndex(listId);
             if(response.data.success) {
-                console.log("RETURNED ID IN FUNC");
-                console.log(response.data.id);
                 return response.data.id;
             }
         }

@@ -4,8 +4,6 @@ const Playlist = require('../models/playlist-model')
 //FUNCTION FOR CREATING AND RETURNING A NEW SONG
 createNewSong = (req, res) => {
     const body = req.body;
-    console.log("createNewSong body: ");
-    console.log(body);
 
     if (body == null) {
         return res.status(400).json({
@@ -15,7 +13,6 @@ createNewSong = (req, res) => {
     }
 
     const song = new Song(body);
-    console.log("song: " + JSON.stringify(body));
     if (song == null) {
         return res.status(400).json({ 
             success: false, 
@@ -40,9 +37,6 @@ createNewSong = (req, res) => {
 }
 
 getSongIdFromIndex = async (req, res) => {
-
-    console.log("INDEX");
-    console.log(req.body);
 
     await Playlist.findOne({ _id: req.params.id }, (err, list) => {
         if (err) {

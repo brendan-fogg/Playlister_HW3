@@ -65,7 +65,7 @@ export const useGlobalStore = () => {
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
                 return setStore({
                     idNamePairs: payload.idNamePairs,
-                    currentList: payload.playlist,
+                    currentList: payload.playlist ,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     listPairForDeletion: null,
@@ -103,7 +103,7 @@ export const useGlobalStore = () => {
                     idNamePairs: payload.idNamePairs,
                     currentList: payload.newList,
                     newListCounter: store.newListCounter + 1,
-                    listNameActive: false,
+                    listNameActive: true,
                     listPairForDeletion: null,
                     songForEdit: null,
                     songForDeletion: null,
@@ -499,7 +499,6 @@ export const useGlobalStore = () => {
                 async function asyncUpdateList(playlist, id){
                     response = await api.updatePlaylistById(id, playlist);
                     if(response.data.success) {
-                        
                         storeReducer({
                             type: GlobalStoreActionType.ADD_NEW_SONG,
                             payload: {updatedList: response.data.playlist}

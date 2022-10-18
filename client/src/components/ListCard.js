@@ -15,6 +15,14 @@ function ListCard(props) {
     store.history = useHistory();
     const { idNamePair, selected } = props;
 
+    let otherEditActive = false;
+    if(store.currentList != null){
+        if(store.listNameActive){
+            if(store.currentList._id === idNamePair._id){
+                otherEditActive = true;
+            }
+        }
+    }   
 
     let buttonClass = "list-card-button";
     if(store.listNameActive){
@@ -58,7 +66,9 @@ function ListCard(props) {
                 newName = text;
             }
             store.changeListName(id, newName);
-            toggleEdit();
+            if(editActive == true){
+                toggleEdit();
+            }
         }
     }
     function handleUpdateText(event) {
@@ -108,8 +118,7 @@ function ListCard(props) {
                 value={"\u270E"}
             />
         </div>;
-
-    if (editActive) {
+    if (editActive || otherEditActive) {
         cardElement =
             <input
                 id={"list-" + idNamePair._id}

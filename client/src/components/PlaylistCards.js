@@ -14,6 +14,32 @@ function PlaylistCards() {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
 
+    let ctrlPressed = false;
+    document.onkeydown = handleAppKeyDown;
+    document.onkeyup = handleAppKeyUp;
+
+    function handleAppKeyDown(keyEvent){
+        let CTRL_KEY_CODE = 17;
+        if (keyEvent.which == CTRL_KEY_CODE) {
+            ctrlPressed = true;
+        }
+        else if (keyEvent.key.toLowerCase() == "z") {
+            if (ctrlPressed) {
+                store.undo();
+            }
+        }
+        else if (keyEvent.key.toLowerCase() == "y") {
+            if (ctrlPressed) {
+                store.redo();
+            }
+        }
+    }
+    function handleAppKeyUp(keyEvent){
+        if (keyEvent.which === "17")
+            ctrlPressed = false;
+    }
+
+
     let editModal = <EditSongModal/>;
     let deleteModal = <DeleteSongModal/>;
 

@@ -52,7 +52,7 @@ function ListCard(props) {
         if (event.code === "Enter") {
             let id = event.target.id.substring("list-".length);
             let newName = ""
-            if(text == ""){
+            if(text === ""){
                 newName = idNamePair.name;
             }else{
                 newName = text;

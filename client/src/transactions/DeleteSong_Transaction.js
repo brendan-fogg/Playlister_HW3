@@ -15,20 +15,11 @@ export default class DeleteSong_Transaction extends jsTPS_Transaction {
     }
 
     doTransaction() {
-        console.log("DELETE SONG TRANSACTION")
         this.store.deleteSongFromList();
-
-        console.log("Store after call:");
-        console.log(this.store.currentList);
-
     }
     
     undoTransaction() {
-        console.log("UNDO DELETE SONG TRANSACTION")
         this.store.addSongAtIndex(this.deletedSong, this.deletionIndex);
-
-        console.log("Store after call:");
-        console.log(this.store.currentList);
 
 
     }

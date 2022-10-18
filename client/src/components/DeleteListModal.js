@@ -8,11 +8,9 @@ function DeleteListModal(){
 
     let pair = store.listPairForDeletion;
     let name = null;
-    let id = null;
 
     if(pair != null){
         name = pair.name;
-        id = pair._id;
     }
 
     function closeDeleteModal(event){

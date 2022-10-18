@@ -17,17 +17,6 @@ function PlaylistCards() {
     let editModal = <EditSongModal/>;
     let deleteModal = <DeleteSongModal/>;
 
-    window.addEventListener("keydown", buttonFunc);
-    function buttonFunc(event) {
-        if(event.ctrlKey){
-            if(event.key === 'z'){
-                store.undo();
-            }else if(event.key === 'y'){
-                store.redo();
-            }
-        }
-    }
-
     return (
         <div id="playlist-cards">
         {

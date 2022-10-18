@@ -51,6 +51,9 @@ export const useGlobalStore = () => {
         songIndexDragged: null,
         editIndex: null,
         deleteIndex: null,
+        toolbarDisabled: true,
+        undoable: tps.hasTransactionToUndo(),
+        redoable: tps.hasTransactionToRedo(),
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -71,6 +74,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 });
             }
             // STOP EDITING THE CURRENT LIST
@@ -86,6 +92,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: true,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 })
             }
             // CREATE A NEW LIST
@@ -101,6 +110,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 })
             }
             // DELETE A LIST
@@ -116,6 +128,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
@@ -131,6 +146,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -146,6 +164,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 });
             }
             // UPDATE A LIST
@@ -161,6 +182,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: false,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 });
             }
             // START EDITING A LIST NAME
@@ -176,6 +200,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 });
             }
             // ADD A NEW SONG
@@ -191,6 +218,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 })
             }
             case GlobalStoreActionType.MARK_SONG_FOR_EDIT: {
@@ -205,6 +235,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: payload.index,
                     deleteIndex: null,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 })
             }
             case GlobalStoreActionType.UPDATE_SONG: {
@@ -219,6 +252,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 })
             }
             case GlobalStoreActionType.MARK_SONG_FOR_DELETION: {
@@ -233,6 +269,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: null,
                     editIndex: null,
                     deleteIndex: payload.index,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 })
             }
             case GlobalStoreActionType.SET_DRAG_INDEX: {
@@ -247,6 +286,9 @@ export const useGlobalStore = () => {
                     songIndexDragged: payload.index,
                     editIndex: null,
                     deleteIndex: null,
+                    toolbarDisabled: store.toolbarDisabled,
+                    undoable: tps.hasTransactionToUndo(),
+                    redoable: tps.hasTransactionToRedo(),
                 })
             }
             default:
@@ -260,11 +302,19 @@ export const useGlobalStore = () => {
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
         // GET THE LIST
+        console.log("ID");
+        console.log(id);
+        console.log("NEW NAME");
+        console.log(newName);
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
                 let playlist = response.data.playlist;
+                console.log("OLD PLAYLIST");
+                console.log(playlist);
                 playlist.name = newName;
+                console.log("NEW PLAYLIST");
+                console.log(playlist);
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
@@ -272,6 +322,8 @@ export const useGlobalStore = () => {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
                                 let pairsArray = response.data.idNamePairs;
+                                console.log("PAIRS ARRAY");
+                                console.log(pairsArray);
                                 storeReducer({
                                     type: GlobalStoreActionType.CHANGE_LIST_NAME,
                                     payload: {

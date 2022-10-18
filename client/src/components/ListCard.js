@@ -15,6 +15,12 @@ function ListCard(props) {
     store.history = useHistory();
     const { idNamePair, selected } = props;
 
+
+    let buttonClass = "list-card-button";
+    if(store.listNameActive){
+        buttonClass += " disabled";
+    }
+
     function handleLoadList(event) {
         if (event.target.id.includes("delete")){
             return;
@@ -45,7 +51,13 @@ function ListCard(props) {
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             let id = event.target.id.substring("list-".length);
-            store.changeListName(id, text);
+            let newName = ""
+            if(text == ""){
+                newName = idNamePair.name;
+            }else{
+                newName = text;
+            }
+            store.changeListName(id, newName);
             toggleEdit();
         }
     }
@@ -54,7 +66,6 @@ function ListCard(props) {
     }
 
     function openDeleteModal(event){
-        console.log(idNamePair);
         store.markListForDeletion(idNamePair._id);
         let modal = document.getElementById("delete-list-modal");
         modal.classList.add("is-visible");
@@ -92,7 +103,7 @@ function ListCard(props) {
                 disabled={cardStatus}
                 type="button"
                 id={"edit-list-" + idNamePair._id}
-                className="list-card-button"
+                className={buttonClass}
                 onClick={handleToggleEdit}
                 value={"\u270E"}
             />

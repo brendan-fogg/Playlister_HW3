@@ -33,6 +33,11 @@ const ListSelector = () => {
 
     let deleteModal = <DeleteListModal/>;
 
+    let buttonClass = "playlister-button";
+    if(store.listNameActive){
+        buttonClass += " disabled";
+    }
+
     return (
         <div id="playlist-selector">
             <div id="list-selector-list">
@@ -41,7 +46,7 @@ const ListSelector = () => {
                     type="button"
                     id="add-list-button"
                     onClick={handleCreateNewList}
-                    className="playlister-button"
+                    className={buttonClass}
                     value="+" />
                 Your Lists
             </div>                {

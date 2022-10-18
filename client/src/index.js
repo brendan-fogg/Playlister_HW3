@@ -9,9 +9,9 @@ import reportWebVitals from './reportWebVitals';
   @author McKilla Gorilla
 */
 import { GlobalStoreContext, useGlobalStore } from './store'
+
 const AppWrapper = () => {
   const store = useGlobalStore();
-
   return (
     <GlobalStoreContext.Provider value={store}>
       <App />

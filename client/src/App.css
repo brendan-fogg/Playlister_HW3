@@ -242,6 +242,11 @@ span {
   font-size: 20pt;
 }
 
+.disabled {
+  opacity: 0.25; 
+  cursor: not-allowed;
+}
+
 #title-prompt {
   grid-column: 1 / 2;
   grid-row: 1 / 2;

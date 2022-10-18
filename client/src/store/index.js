@@ -334,6 +334,7 @@ export const useGlobalStore = () => {
 
     // THIS FUNCTION PROCESSES CLOSING THE CURRENTLY LOADED LIST
     store.closeCurrentList = function () {
+        tps.clearAllTransactions()
         storeReducer({
             type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
             payload: {}
@@ -594,7 +595,7 @@ export const useGlobalStore = () => {
             }
 
             if(index !== -1){
-                playlist.songs[index] = song;
+                playlist.songs[index].title = song;
             }else{
                 return;
             }
@@ -616,7 +617,11 @@ export const useGlobalStore = () => {
     store.changeSongById = function (index, song){
         async function asyncChangeSongById(index, song){
             let playlist = store.currentList;
-            playlist.songs[index] = song;
+
+            playlist.songs[index].title = song.title;
+            playlist.songs[index].artist = song.artist;
+            playlist.songs[index].youTubeId = song.youtube;
+
             async function asyncUpdateList(playlist, id){
                 let response = await api.updatePlaylistById(id, playlist);
                 if(response.data.success) {

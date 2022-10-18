@@ -3,7 +3,7 @@ import jsTPS from '../common/jsTPS'
 import AddSong_Transaction from '../transactions/AddSong_Transaction.js';
 import DeleteSong_Transaction from '../transactions/DeleteSong_Transaction.js';
 import MoveSong_Transaction from '../transactions/MoveSong_Transaction.js';
-
+import EditSong_Transaction from '../transactions/EditSong_Transaction.js';
 
 
 import api from '../api'
@@ -571,6 +571,24 @@ export const useGlobalStore = () => {
         asyncUpdateSongInList();
     }
 
+    store.changeSongById = function (index, song){
+        async function asyncChangeSongById(index, song){
+            let playlist = store.currentList;
+            playlist.songs[index] = song;
+            async function asyncUpdateList(playlist, id){
+                let response = await api.updatePlaylistById(id, playlist);
+                if(response.data.success) {
+                    storeReducer({
+                        type: GlobalStoreActionType.UPDATE_SONG,
+                        payload: {updatedList: response.data.playlist}
+                    });
+                }
+            }
+            asyncUpdateList(playlist, playlist._id);
+        }
+        asyncChangeSongById(index, song);
+    }
+
     store.setSongForDeletion = function (index){
         async function asyncSetSongForDeletion(index){
             let list = store.currentList;
@@ -715,7 +733,10 @@ export const useGlobalStore = () => {
         let transaction = new MoveSong_Transaction(store, drag, drop);
         tps.addTransaction(transaction);
     }
-
+    store.editSongTransaction = function () {
+        let transaction = new EditSong_Transaction(store);
+        tps.addTransaction(transaction);
+    }
 
     // THIS GIVES OUR STORE AND ITS REDUCER TO ANY COMPONENT THAT NEEDS IT
     return { store, storeReducer };

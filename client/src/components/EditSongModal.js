@@ -15,7 +15,7 @@ function EditSongModal(){
     
     function editList(event) {
         //Edit Song
-        store.updateSongInList();
+        store.editSongTransaction();
         let modal = document.getElementById("edit-song-modal");
         modal.classList.remove("is-visible");
     }

@@ -11,6 +11,7 @@ import reportWebVitals from './reportWebVitals';
 import { GlobalStoreContext, useGlobalStore } from './store'
 const AppWrapper = () => {
   const store = useGlobalStore();
+
   return (
     <GlobalStoreContext.Provider value={store}>
       <App />
